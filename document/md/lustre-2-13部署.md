@@ -59,7 +59,7 @@ gpgcheck=0
 [root@CentOS1 ~]# yum install epel-release quilt libselinux-devel python-docutils xmlto asciidoc elfutils-libelf-devel elfutils-devel zlib-devel rng-tools binutils-devel python-devel sg3_utils newt-devel perl-ExtUtils-Embed audit-libs-devel lsof hmaccalc -y
 [root@CentOS1 ~]# systemctl stop firewalld.service
 [root@CentOS1 ~]# systemctl disable firewalld.service
-[root@CentOS1 ~]# yum install  yum-utils dkms-y
+[root@CentOS1 ~]# yum install -y  yum-utils dkms
 [root@CentOS1 ~]# reposync -c lustre-repo.conf -n \
 -r lustre-server \
 -r lustre-client \
