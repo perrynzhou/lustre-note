@@ -11,4 +11,5 @@
 
 
 ### lustre 原理分析
-- [lustre-2-13部署](./document/md/lustre-2-13部署.md)
+- [lustre在线部署](./document/md/lustre在线部署.md)
+- [lustre离线部署](./document/md/lustre离线部署.md)
