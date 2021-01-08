@@ -1,18 +1,15 @@
----
-title: lustre-2.13部署
-date: 2020-05-05 13:53:58
-tags:
----
-## chapter 1.lustre部署
-### 0.节点信息
+## lustre-2.13部署
 
-| node   | role         |
-| ------------ | ------------ |
-| centos1(mgs_node/mds_node) | mgs/mds      			|
-| centos2(oss_node) | oss         		  |
-| centos3(client_node) | client        		|
+### chapter 1.lustre部署
+#### 0.节点信息
 
-### 1.kernel版本信息
+| node                       | role    |
+| -------------------------- | ------- |
+| centos1(mgs_node/mds_node) | mgs/mds |
+| centos2(oss_node)          | oss     |
+| centos3(client_node)       | client  |
+
+#### 1.kernel版本信息
 
 ```
 [root@CentOS1 ~]# cat /etc/redhat-release 
@@ -21,7 +18,7 @@ CentOS Linux release 7.7.1908 (Core)
 3.10.0-1062.el7.x86_64
 ```
 
-### 2.配置离线lustre 安装包安装源
+#### 2.配置离线lustre 安装包安装源
 ```
 // lustre-2.13.0 内核刚好匹配 kernel 3.10.0-1062.el7.x86_64
 [root@CentOS1 lustre]# pwd
@@ -51,7 +48,7 @@ baseurl=https://downloads.whamcloud.com/public/e2fsprogs/latest/el7
 gpgcheck=0
 ```
 
-### 3.下载lustre安装包到本地
+#### 3.下载lustre安装包到本地
 
 ```
 [root@CentOS1 ~]# cd ~/lustre
@@ -59,7 +56,7 @@ gpgcheck=0
 [root@CentOS1 ~]# yum install epel-release quilt libselinux-devel python-docutils xmlto asciidoc elfutils-libelf-devel elfutils-devel zlib-devel rng-tools binutils-devel python-devel sg3_utils newt-devel perl-ExtUtils-Embed audit-libs-devel lsof hmaccalc -y
 [root@CentOS1 ~]# systemctl stop firewalld.service
 [root@CentOS1 ~]# systemctl disable firewalld.service
-[root@CentOS1 ~]# yum install -y  yum-utils dkms
+[root@CentOS1 ~]# yum install  yum-utils dkms-y
 [root@CentOS1 ~]# reposync -c lustre-repo.conf -n \
 -r lustre-server \
 -r lustre-client \
@@ -68,12 +65,14 @@ gpgcheck=0
 [root@CentOS1 ~]# cp ~/lustre/repo.conf /etc/yum.repos.d/lustre.repo
 ```
 
-### 4.安装lustre版本kernel
+#### 4.安装lustre版本kernel
 
 ```
 //after download all lustre package
 [root@CentOS1 lustre]# ls
 e2fsprogs-wc  lustre-client  lustre-server  patchless-ldiskfs-server  repo.conf
+
+[root@CentOS1 lustre]# yum remove -y    kernel-tools-libs  kernel-tools kernel-headers  kernel-debug-devel  kernel-debuginfo
 
 [root@CentOS1 lustre]# cd e2fsprogs-wc/RPMS/x86_64/ && pwd
 /root/lustre/e2fsprogs-wc/RPMS/x86_64 && yum --nogpgcheck --disablerepo=* --enablerepo=e2fsprogs-wc install  e2fsprogs-1.45.2.wc1-0.el7.x86_64.rpm 
@@ -83,11 +82,13 @@ e2fsprogs-wc  lustre-client  lustre-server  patchless-ldiskfs-server  repo.conf
 yum --nogpgcheck --disablerepo=* --enablerepo=e2fsprogs-wc install  e2fsprogs-1.45.2.wc1-0.el7.x86_64.rpm
 
 
-yum --nogpgcheck --disablerepo=* --enablerepo=lustre-server install  kernel-devel-3.10.0-1062.1.1.el7_lustre.x86_64.rpm  kernel-headers-3.10.0-1062.1.1.el7_lustre.x86_64.rpm 
+yum --nogpgcheck --disablerepo=* --enablerepo=lustre-server install  kernel-devel-3.10.0-1062.1.1.el7_lustre.x86_64.rpm  kernel-headers-3.10.0-1062.1.1.el7_lustre.x86_64.rpm kernel-tools-libs-3.10.0-1062.1.1.el7_lustre.x86_64.rpm 
 [root@CentOS1 ~] reboot
 ```
-### 5.安装zfs
+#### 5.安装zfs
 ```
+[root@CentOS1 lustre]# yum install epel-release quilt libselinux-devel python-docutils xmlto asciidoc elfutils-libelf-devel elfutils-devel zlib-devel rng-tools binutils-devel python-devel sg3_utils newt-devel perl-ExtUtils-Embed audit-libs-devel lsof hmaccalc asciidoc audit-libs-devel automake bc binutils-devel bison device-mapper-devel elfutils-devel elfutils-libelf-devel expect flex gcc gcc-c++ git glib2 glib2-devel hmaccalc keyutils-libs-devel krb5-devel ksh ibattr-devel libblkid-devel libselinux-devel libtool libuuid-devel libyaml-devel lsscsi make ncurses-devel net-snmp-devel net-tools newt-devel numactl-devel parted patchutils pciutils-devel perl-ExtUtils-Embed pesign python-devel redhat-rpm-config rpm-build systemd-devel tcl tcl-devel tk tk-devel wget xmlto yum-utils zlib-devel linux-firmware  dkms -y
+
 [root@CentOS1 lustre]# cd lustre-server/RPMS/x86_64/ && pwd 
 /root/lustre/lustre-server/RPMS/x86_64
 
@@ -104,7 +105,7 @@ zcommon                73440  1 zfs
 znvpair                89131  2 zfs,zcommon
 spl                   102412  4 icp,zfs,zcommon,znvpair
 ```
-### 6.安装lustre server 核心包 
+#### 6.安装lustre server 核心包 
 ```
 [root@CentOS1 ~] yum --nogpgcheck --disablerepo=*  --enablerepo=lustre-server install kmod-lustre-2.13.0-1.el7.x86_64.rpm kmod-lustre-osd-ldiskfs-2.13.0-1.el7.x86_64.rpm lustre-2.13.0-1.el7.x86_64.rpm lustre-osd-ldiskfs-mount-2.13.0-1.el7.x86_64.rpm lustre-osd-zfs-mount-2.13.0-1.el7.x86_64.rpm lustre-resource-agents-2.13.0-1.el7.x86_64.rpm
 
@@ -126,7 +127,7 @@ lnet                  595547  6 lmv,osc,lustre,obdclass,ptlrpc,ksocklnd
 libcfs                388506  11 fid,fld,lmv,mdc,lov,osc,lnet,lustre,obdclass,ptlrpc,ksocklnd
 ```
 
-### 7.安装lustre client核心包(客户端节点)
+#### 7.安装lustre client核心包(客户端节点)
 ```
 //lustre server和lustre client版本版本冲突，客户端必须在其他节点安装
 [root@CentOS3 ~]# yum install epel-release -y
@@ -141,7 +142,7 @@ lustre-client-2.13.0-1.el7.x86_64.rpm             lustre-client-tests-2.13.0-1.e
 ```
 
 
-### 8.deploy msg/mst
+#### 8.deploy msg/mst
 
 ```
 [root@CentOS1 ~]# fdisk -l|grep sd
@@ -165,7 +166,7 @@ tmpfs                    917M     0  917M   0% /sys/fs/cgroup
 tmpfs                    184M     0  184M   0% /run/user/0
 /dev/sdb                  24G   46M   23G   1% /mgt
 ```
-### 9.deploy mds/mdt
+#### 9.deploy mds/mdt
 
 ```
 //mkfs.lustre --fsname=lustrefs --mgsnode=msg_node@tcp0  --mdt --index=0 /dev/sdc
@@ -193,7 +194,7 @@ Writing CONFIGS/mountdata
 [root@CentOS1 ~]# mount.lustre /dev/sdc  /mdt
 ```
 
-### 10.deploy oss/ost
+#### 10.deploy oss/ost
 
 ```
 //mkfs.lustre --ost --fsname=lustrefs --mgsnode=mgs_node@tcp0 --index=1 /dev/sdb
@@ -222,7 +223,7 @@ Writing CONFIGS/mountdata
 [root@CentOS2 ~]# mount.lustre  /dev/sdb /ost/
 ```
 
-### 11.mount on client node
+#### 11.mount on client node
 
 ```
 [root@CentOS3 ~]# mkdir /mnt/lustrefs
@@ -240,7 +241,7 @@ tmpfs                      184M     0  184M   0% /run/user/0
 10.211.55.3@tcp:/lustrefs   23G   46M   22G   1% /mnt/lustrefs
 ```
 
-## chapter 2. lustre process
+### chapter 2. lustre process
 
 ```
 //show luste mgs info
@@ -295,7 +296,7 @@ root      2442     2  0 13:47 ?        00:00:00 [ll_ost_out00_00]
 root      2473  2111  0 13:49 pts/0    00:00:00 grep --color=auto ost
 ```
 
-## chapter 3.script
+### chapter 3.script
 
 - start mgs/mdt
 
