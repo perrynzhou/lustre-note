@@ -1,7 +1,9 @@
-## lustre-2.13部署
-
-### chapter 1.lustre部署
-#### 0.节点信息
+---
+title: lustre-2.13部署
+date: 2020-05-05 13:53:58
+tags:
+---
+### 节点信息
 
 | node                       | role    |
 | -------------------------- | ------- |
@@ -9,7 +11,7 @@
 | centos2(oss_node)          | oss     |
 | centos3(client_node)       | client  |
 
-#### 1.kernel版本信息
+### kernel版本信息
 
 ```
 [root@CentOS1 ~]# cat /etc/redhat-release 
@@ -18,14 +20,16 @@ CentOS Linux release 7.7.1908 (Core)
 3.10.0-1062.el7.x86_64
 ```
 
-#### 2.配置离线lustre 安装包安装源
+### 配置lustre安装源
+
+- 更新源
 ```
 // lustre-2.13.0 内核刚好匹配 kernel 3.10.0-1062.el7.x86_64
 [root@CentOS1 lustre]# pwd
 /root/lustre
 [root@CentOS1 lustre]# ls
 repo.conf
-[root@CentOS1 lustre]# cat repo.conf 
+[root@CentOS1 lustre]# cat lustre.repo 
 [lustre-server]
 name=lustre-server
 baseurl=https://downloads.whamcloud.com/public/lustre/lustre-2.13.0/el7.7.1908/server
@@ -46,9 +50,11 @@ gpgcheck=0
 name=e2fsprogs-wc
 baseurl=https://downloads.whamcloud.com/public/e2fsprogs/latest/el7
 gpgcheck=0
+
+[root@CentOS1 lustre]# cp  lustre.repo /etc/yum.repo/lustre.repo
 ```
 
-#### 3.下载lustre安装包到本地
+- 预安装
 
 ```
 [root@CentOS1 ~]# cd ~/lustre
@@ -56,46 +62,43 @@ gpgcheck=0
 [root@CentOS1 ~]# yum install epel-release quilt libselinux-devel python-docutils xmlto asciidoc elfutils-libelf-devel elfutils-devel zlib-devel rng-tools binutils-devel python-devel sg3_utils newt-devel perl-ExtUtils-Embed audit-libs-devel lsof hmaccalc -y
 [root@CentOS1 ~]# systemctl stop firewalld.service
 [root@CentOS1 ~]# systemctl disable firewalld.service
-[root@CentOS1 ~]# yum install  yum-utils dkms-y
-[root@CentOS1 ~]# reposync -c lustre-repo.conf -n \
--r lustre-server \
--r lustre-client \
--r patchless-ldiskfs-server \
--r e2fsprogs-wc
-[root@CentOS1 ~]# cp ~/lustre/repo.conf /etc/yum.repos.d/lustre.repo
+[root@CentOS1 lustre]# yum remove -y    kernel-tools-libs  kernel-tools kernel-headers  kernel-debug-devel  kernel-debuginfo 
+
+yum --nogpgcheck --disablerepo=base,extras,updates \
+--enablerepo=lustre-server install \
+e2fsprogs \
+lustre-client \
+kernel \
+kernel-devel \
+kernel-headers \
+kernel-tools \
+kernel-tools-libs \
+kernel-tools-libs-devel
 ```
 
-#### 4.安装lustre版本kernel
+### 安装lustre
 
 ```
-//after download all lustre package
-[root@CentOS1 lustre]# ls
-e2fsprogs-wc  lustre-client  lustre-server  patchless-ldiskfs-server  repo.conf
 
-[root@CentOS1 lustre]# yum remove -y    kernel-tools-libs  kernel-tools kernel-headers  kernel-debug-devel  kernel-debuginfo
+[root@CentOS1 lustre]# yum install epel-release quilt libselinux-devel python-docutils xmlto asciidoc elfutils-libelf-devel elfutils-devel zlib-devel rng-tools binutils-devel python-devel sg3_utils newt-devel perl-ExtUtils-Embed audit-libs-devel lsof hmaccalc asciidoc audit-libs-devel automake bc binutils-devel bison device-mapper-devel elfutils-devel elfutils-libelf-devel expect flex gcc gcc-c++ git glib2 glib2-devel hmaccalc keyutils-libs-devel krb5-devel ksh ibattr-devel libblkid-devel libselinux-devel libtool libuuid-devel libyaml-devel lsscsi make ncurses-devel net-snmp-devel net-tools newt-devel numactl-devel parted patchutils pciutils-devel perl-ExtUtils-Embed pesign python-devel redhat-rpm-config rpm-build systemd-devel tcl tcl-devel tk tk-devel wget xmlto yum-utils zlib-devel linux-firmware  dkms -y 
 
-[root@CentOS1 lustre]# cd e2fsprogs-wc/RPMS/x86_64/ && pwd
-/root/lustre/e2fsprogs-wc/RPMS/x86_64 && yum --nogpgcheck --disablerepo=* --enablerepo=e2fsprogs-wc install  e2fsprogs-1.45.2.wc1-0.el7.x86_64.rpm 
+yum --nogpgcheck --enablerepo=lustre-server install \
+kmod-lustre-osd-ldiskfs \
+lustre-dkms \
+lustre-osd-ldiskfs-mount \
+lustre-osd-zfs-mount \
+lustre lustre-debuginfo  \
+lustre-resource-agents \
+zfs  zfs-debuginfo
 
-[root@CentOS1 lustre]# cd lustre-server/RPMS/x86_64/ && pwd 
-/root/lustre/lustre-server/RPMS/x86_64
-yum --nogpgcheck --disablerepo=* --enablerepo=e2fsprogs-wc install  e2fsprogs-1.45.2.wc1-0.el7.x86_64.rpm
-
-
-yum --nogpgcheck --disablerepo=* --enablerepo=lustre-server install  kernel-devel-3.10.0-1062.1.1.el7_lustre.x86_64.rpm  kernel-headers-3.10.0-1062.1.1.el7_lustre.x86_64.rpm kernel-tools-libs-3.10.0-1062.1.1.el7_lustre.x86_64.rpm 
 [root@CentOS1 ~] reboot
 ```
-#### 5.安装zfs
+
+### 验证lustre
 ```
-[root@CentOS1 lustre]# yum install epel-release quilt libselinux-devel python-docutils xmlto asciidoc elfutils-libelf-devel elfutils-devel zlib-devel rng-tools binutils-devel python-devel sg3_utils newt-devel perl-ExtUtils-Embed audit-libs-devel lsof hmaccalc asciidoc audit-libs-devel automake bc binutils-devel bison device-mapper-devel elfutils-devel elfutils-libelf-devel expect flex gcc gcc-c++ git glib2 glib2-devel hmaccalc keyutils-libs-devel krb5-devel ksh ibattr-devel libblkid-devel libselinux-devel libtool libuuid-devel libyaml-devel lsscsi make ncurses-devel net-snmp-devel net-tools newt-devel numactl-devel parted patchutils pciutils-devel perl-ExtUtils-Embed pesign python-devel redhat-rpm-config rpm-build systemd-devel tcl tcl-devel tk tk-devel wget xmlto yum-utils zlib-devel linux-firmware  dkms -y
-
-[root@CentOS1 lustre]# cd lustre-server/RPMS/x86_64/ && pwd 
-/root/lustre/lustre-server/RPMS/x86_64
-
-[root@CentOS1 x86_64]# yum --nogpgcheck --disablerepo=* --enablerepo=lustre-server install zfs-0.7.13-1.el7.x86_64.rpm  zfs-dkms-0.7.13-1.el7.noarch.rpm  zfs-dracut-0.7.13-1.el7.x86_64.rpm
-
-[root@CentOS1 x86_64]# reboot
-[root@CentOS1 x86_64]# modprobe  zfs
+[root@CentOS1 x86_64]# modprobe -v zfs
+[root@CentOS1 x86_64]# modprobe -v lustre
+[root@CentOS1 x86_64]# modprobe -v lnet
 [root@CentOS1 x86_64]# lsmod  |grep zfs
 zfs                  3564425  3 
 zunicode              331170  1 zfs
@@ -104,13 +107,8 @@ icp                   270148  1 zfs
 zcommon                73440  1 zfs
 znvpair                89131  2 zfs,zcommon
 spl                   102412  4 icp,zfs,zcommon,znvpair
-```
-#### 6.安装lustre server 核心包 
-```
-[root@CentOS1 ~] yum --nogpgcheck --disablerepo=*  --enablerepo=lustre-server install kmod-lustre-2.13.0-1.el7.x86_64.rpm kmod-lustre-osd-ldiskfs-2.13.0-1.el7.x86_64.rpm lustre-2.13.0-1.el7.x86_64.rpm lustre-osd-ldiskfs-mount-2.13.0-1.el7.x86_64.rpm lustre-osd-zfs-mount-2.13.0-1.el7.x86_64.rpm lustre-resource-agents-2.13.0-1.el7.x86_64.rpm
 
-[root@CentOS1 ~]# reboot
-[root@CentOS1 ~]# modprobe  lustre
+
 [root@CentOS1 ~]# lsmod  |grep lustre
 lustre                875887  0 
 lmv                   191957  1 lustre
@@ -121,28 +119,19 @@ obdclass             2649116  8 fid,fld,lmv,mdc,lov,osc,lustre,ptlrpc
 lnet                  595547  6 lmv,osc,lustre,obdclass,ptlrpc,ksocklnd
 libcfs                388506  11 fid,fld,lmv,mdc,lov,osc,lnet,lustre,obdclass,ptlrpc,ksocklnd
 
-[root@CentOS1 ~]# modprobe  lnet
 [root@CentOS1 ~]# lsmod  |grep lnet
 lnet                  595547  6 lmv,osc,lustre,obdclass,ptlrpc,ksocklnd
 libcfs                388506  11 fid,fld,lmv,mdc,lov,osc,lnet,lustre,obdclass,ptlrpc,ksocklnd
 ```
 
-#### 7.安装lustre client核心包(客户端节点)
+### 安装lustre client核心包(客户端节点)
 ```
 //lustre server和lustre client版本版本冲突，客户端必须在其他节点安装
-[root@CentOS3 ~]# yum install epel-release -y
-[root@CentOS3 ~]# yum install dkms -y
-[root@CentOS3 ~]# cd lustre/
-[root@CentOS3 lustre]# cd lustre-client/RPMS/x86_64/
-[root@CentOS3 x86_64]# ls
-kmod-lustre-client-2.13.0-1.el7.x86_64.rpm        lustre-client-debuginfo-2.13.0-1.el7.x86_64.rpm  lustre-iokit-2.13.0-1.el7.x86_64.rpm
-kmod-lustre-client-tests-2.13.0-1.el7.x86_64.rpm  lustre-client-dkms-2.13.0-1.el7.noarch.rpm
-lustre-client-2.13.0-1.el7.x86_64.rpm             lustre-client-tests-2.13.0-1.el7.x86_64.rpm
-[root@CentOS3 x86_64]# yum --nogpgcheck --disablerepo=*  --enablerepo=lustre-client install  kmod-lustre-client-2.13.0-1.el7.x86_64.rpm  lustre-client-2.13.0-1.el7.x86_64.rpm  lustre-client-dkms-2.13.0-1.el7.noarch.rpm
+[root@CentOS3 ~]# yum --nogpgcheck --enablerepo=lustre-client install kmod-lustre-client lustre-client
 ```
 
 
-#### 8.deploy msg/mst
+### 创建MGS/MGT
 
 ```
 [root@CentOS1 ~]# fdisk -l|grep sd
@@ -166,7 +155,7 @@ tmpfs                    917M     0  917M   0% /sys/fs/cgroup
 tmpfs                    184M     0  184M   0% /run/user/0
 /dev/sdb                  24G   46M   23G   1% /mgt
 ```
-#### 9.deploy mds/mdt
+### 9.deploy mds/mdt
 
 ```
 //mkfs.lustre --fsname=lustrefs --mgsnode=msg_node@tcp0  --mdt --index=0 /dev/sdc
@@ -194,7 +183,7 @@ Writing CONFIGS/mountdata
 [root@CentOS1 ~]# mount.lustre /dev/sdc  /mdt
 ```
 
-#### 10.deploy oss/ost
+### 10.deploy oss/ost
 
 ```
 //mkfs.lustre --ost --fsname=lustrefs --mgsnode=mgs_node@tcp0 --index=1 /dev/sdb
@@ -223,7 +212,7 @@ Writing CONFIGS/mountdata
 [root@CentOS2 ~]# mount.lustre  /dev/sdb /ost/
 ```
 
-#### 11.mount on client node
+### 11.mount on client node
 
 ```
 [root@CentOS3 ~]# mkdir /mnt/lustrefs
@@ -241,7 +230,7 @@ tmpfs                      184M     0  184M   0% /run/user/0
 10.211.55.3@tcp:/lustrefs   23G   46M   22G   1% /mnt/lustrefs
 ```
 
-### chapter 2. lustre process
+## chapter 2. lustre process
 
 ```
 //show luste mgs info
@@ -296,7 +285,7 @@ root      2442     2  0 13:47 ?        00:00:00 [ll_ost_out00_00]
 root      2473  2111  0 13:49 pts/0    00:00:00 grep --color=auto ost
 ```
 
-### chapter 3.script
+## chapter 3.script
 
 - start mgs/mdt
 
