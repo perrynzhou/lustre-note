@@ -163,7 +163,7 @@ lustre-client
  mount -t lustre 172.16.84.43@tcp:172.16.84.44@tcp:172.16.84.45@tcp:/fs00 /mnt/lustre/
 ```
 
-##  lustre process信息
+###  lustre process信息
 
 ```
 //show luste mgs info
@@ -171,3 +171,14 @@ lustre-client
 [root@CentOS1 ~]# ps -ef|grep ost
 [root@CentOS1 ~]# ps -ef|grep mdt
 ```
+
+### Lustre和Glusterfs 存储写粗略带宽对比
+
+- gluster 采用EC(4+2);lustre采用默认,相同的磁盘的情况下，lustre的写带宽是glusterfs的3倍左右。
+- glusterfs EC大文件写的带宽
+
+![gluster-write](../images/gluster-write.jpg)
+
+- lustre 大文件写的带宽
+
+![lustre_write](../images/lustre_write.jpg)
