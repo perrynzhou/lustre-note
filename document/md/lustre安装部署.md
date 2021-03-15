@@ -122,7 +122,6 @@ mount.lustre mdspool/mdt /lustre/mdt/
 //节点1
 mkdir -p /lustre/ost0
 mkdir -p /lustre/ost1
-
 wipefs -a /dev/sde
 wipefs -a /dev/sdf
 
@@ -130,28 +129,34 @@ wipefs -a /dev/sdf
 mkfs.lustre --ost --reformat --fsname fs00 --index 0 --mgsnode 172.16.84.43@tcp0  --mgsnode 172.16.84.44@tcp0  --mgsnode 172.16.84.45@tcp0 --backfstype zfs osspool0/ost /dev/sde 
 mkfs.lustre --ost --reformat --fsname fs00 --index 1 --mgsnode 172.16.84.43@tcp0  --mgsnode 172.16.84.44@tcp0  --mgsnode 172.16.84.45@tcp0  --backfstype zfs osspool1/ost /dev/sdf 
 
+mount.lustre osspool0/ost /lustre/ost0/
+mount.lustre osspool1/ost /lustre/ost1/
+
 //节点2
 
 mkdir -p /lustre/ost2
 mkdir -p /lustre/ost3
-
 wipefs -a /dev/sde
 wipefs -a /dev/sdf
 
 mkfs.lustre --ost --reformat --fsname fs00 --index 2 --mgsnode 172.16.84.43@tcp0  --mgsnode 172.16.84.44@tcp0  --mgsnode 172.16.84.45@tcp0 --backfstype zfs osspool0/ost /dev/sde 
 mkfs.lustre --ost --reformat --fsname fs00 --index 3 --mgsnode 172.16.84.43@tcp0  --mgsnode 172.16.84.44@tcp0  --mgsnode 172.16.84.45@tcp0  --backfstype zfs osspool1/ost /dev/sdf 
 
+mount.lustre osspool2/ost /lustre/ost2/
+mount.lustre osspool3/ost /lustre/ost3/
+
 //节点3
 
 mkdir -p /lustre/ost4
 mkdir -p /lustre/ost5
-
 wipefs -a /dev/sde
 wipefs -a /dev/sdf
 
 mkfs.lustre --ost --reformat --fsname fs00 --index 4 --mgsnode 172.16.84.43@tcp0  --mgsnode 172.16.84.44@tcp0  --mgsnode 172.16.84.45@tcp0 --backfstype zfs osspool0/ost /dev/sde 
 mkfs.lustre --ost --reformat --fsname fs00 --index 5 --mgsnode 172.16.84.43@tcp0  --mgsnode 172.16.84.44@tcp0  --mgsnode 172.16.84.45@tcp0  --backfstype zfs osspool1/ost /dev/sdf 
 
+mount.lustre osspool4/ost /lustre/ost4/
+mount.lustre osspool5/ost /lustre/ost5/
 ```
 ### 客户端节点挂载
 ```
