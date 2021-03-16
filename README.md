@@ -11,4 +11,4 @@
 
 
 ### lustre 原理分析
-- [lustre部署](./document/md/lustre安装部署.md)
+- [lustre集群部署](./document/md/lustre集群部署.md)
