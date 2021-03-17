@@ -203,6 +203,58 @@ mount -t lustre 172.16.84.43@tcp:172.16.84.44@tcp:172.16.84.45@tcp:/bigfs /mnt/l
 [root@CentOS1 ~]# ps -ef|grep mdt
 ```
 
+### lustre 参数调优入门
+
+```
+ // 可配参数查看
+# lctl list_param ost.*
+ost.OSS
+# lctl list_param ost.OSS.*
+ost.OSS.ost
+ost.OSS.ost_create
+ost.OSS.ost_io
+ost.OSS.ost_out
+ost.OSS.ost_seq
+ost.OSS.uuid
+
+
+# lctl list_param ost.OSS.ost.*
+ost.OSS.ost.high_priority_ratio
+ost.OSS.ost.threads_max
+ost.OSS.ost.threads_min
+ost.OSS.ost.threads_started
+ost.OSS.ost.nrs_crrn_quantum
+ost.OSS.ost.nrs_delay_max
+ost.OSS.ost.nrs_delay_min
+ost.OSS.ost.nrs_delay_pct
+ost.OSS.ost.nrs_policies
+ost.OSS.ost.nrs_tbf_rule
+ost.OSS.ost.req_buffer_history_len
+ost.OSS.ost.req_buffer_history_max
+ost.OSS.ost.req_buffers_max
+ost.OSS.ost.req_history
+ost.OSS.ost.stats
+ost.OSS.ost.timeouts
+
+// 设置参数
+# lctl set_param ost.OSS.ost.threads_max 64
+# lctl set_param ost.OSS.ost.threads_min 64
+
+
+# lctl list_param mdt.*
+mdt.lustrefs-MDT0002
+# lctl list_param mgs.*
+mgs.MGS
+
+// 获取参数配置
+# lctl list_param mdt.lustrefs-MDT0002.*
+mdt.lustrefs-MDT0002.client_cache_count
+mdt.lustrefs-MDT0002.client_cache_seconds
+# lctl get_param mdt.lustrefs-MDT0002.client_cache_count
+mdt.lustrefs-MDT0002.client_cache_count=128
+# lctl set_param mdt.lustrefs-MDT0002.client_cache_count 8192
+mdt.lustrefs-MDT0002.client_cache_count=8192
+```
 ### Lustre 日常的命令使用介绍
 - 查看zfs pool的信息
 ```
