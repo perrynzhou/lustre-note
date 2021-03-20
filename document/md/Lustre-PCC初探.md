@@ -6,6 +6,7 @@
 
 ####  什么是Lustre PCC?
 - Lustre PCC 是Lustre  Persistent Cache on Client技术，借助客户端的挂载节点提供的HDD或者SSD来根据策略来在SSD或者HDD 和lustre文本系统之间数据缓存的技术。
+- 目前Lustre在14版本支持这个功能
 
 #### Lustre PCC 使用什么场景
 
@@ -20,13 +21,13 @@
 #### Lustre PCC 策略有那些？
 
 - RW-PCCM模式，读写模式访问本地lustre的缓存，缓存中的数据通过lhsmtool_posix来和后端的lustre进行数据同步。
-- RO-PCC模式，以制度方式访问本地lustre的缓存，消除了LDLM和RPC的开销。
+- RO-PCC模式，以只读方式访问本地lustre的缓存，消除了LDLM和RPC的开销。
 
 
 #### Lustre 启用和配置
 
 ```
-// mdt节点
+// 每个mdt节点启用，hsm_control=enabled
 [root@dgdpl1915 ~]# lctl set_param mdt.lustrefs-MDT0000.hsm_control=enabled
 mdt.lustrefs-MDT0000.hsm_control=enabled
 [root@dgdpl1915 ~]# lctl get_param mdt.lustrefs-MDT0000.hsm_control       
