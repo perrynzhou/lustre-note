@@ -10,5 +10,6 @@
 - [lustre](./document/pdf)
 
 
-### lustre 原理分析
-- [lustre集群部署](./document/md/lustre集群部署.md)
+### lustre 日常运维和使用
+- [Lustre集群部署](./document/md/Lustre集群部署.md)
+- [Lustre-PCC初探](./document/md/Lustre-PCC初探.md)
