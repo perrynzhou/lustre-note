@@ -10,6 +10,9 @@
 - [lustre](./document/pdf)
 
 
+### OpenZFS
+- [OpenZFS简介](./document/md/OpenZFS介绍.md)
+
 ### lustre 日常运维和使用
 - [Lustre集群部署](./document/md/Lustre集群部署.md)
 - [Lustre-PCC初探](./document/md/Lustre-PCC初探.md)
