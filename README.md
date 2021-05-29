@@ -16,3 +16,8 @@
 ### lustre 日常运维和使用
 - [Lustre集群部署](./document/md/Lustre集群部署.md)
 - [Lustre-PCC初探](./document/md/Lustre-PCC初探.md)
+
+### open-cas-linux 技术
+
+- [OpenCAS缓存加速方案](./document/md/OpenCAS缓存加速方案.md)
+- [OpenCAS模块加载](./document/md/OpenCAS模块加载.md)
