@@ -1,0 +1,14 @@
+*.o
+*.gcno
+*.gcda
+tests/main_test.c
+tests_main
+CLinkedListQueue
+raft_server.c.gcov
+*~
+libcraft.so
+libcraft.a
+
+_topdir/
+*.tar.*
+*.code-workspace

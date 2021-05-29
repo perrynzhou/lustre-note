@@ -1,0 +1,12 @@
+"""Build DAOS config"""
+import os
+
+def scons():
+    """Execute build"""
+    Import('env', 'conf_dir')
+
+    env.Install(conf_dir, ['daos_server.yml', 'daos_control.yml',
+                           'daos_agent.yml'])
+
+if __name__ == "SCons.Script":
+    scons()
