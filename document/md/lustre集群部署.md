@@ -152,6 +152,8 @@ mkfs.lustre --ost --reformat --fsname bigfs --index 0 --mgsnode 172.16.84.43@tcp
 
 mkfs.lustre --ost --reformat --fsname bigfs --index 1 --mgsnode 172.16.84.43@tcp0  --mgsnode 172.16.84.44@tcp0  --mgsnode 172.16.84.45@tcp0  --backfstype zfs osspool1/ost /dev/sdf 
 
+mount.lustre osspool0/ost /lustre/ost0
+mount.lustre osspool1/ost /lustre/ost1
 ```
 
 - 节点172.16.84.44
@@ -166,6 +168,8 @@ mkfs.lustre --ost --reformat --fsname bigfs --index 2 --mgsnode 172.16.84.43@tcp
 
 mkfs.lustre --ost --reformat --fsname bigfs --index 3 --mgsnode 172.16.84.43@tcp0  --mgsnode 172.16.84.44@tcp0  --mgsnode 172.16.84.45@tcp0  --backfstype zfs osspool1/ost /dev/sdf 
 
+mount.lustre osspool0/ost /lustre/ost2
+mount.lustre osspool1/ost /lustre/ost3
 ```
 
 - 节点172.16.84.45
@@ -180,6 +184,9 @@ wipefs -a /dev/sdf
 
 mkfs.lustre --ost --reformat --fsname bigfs --index 4 --mgsnode 172.16.84.43@tcp0  --mgsnode 172.16.84.44@tcp0  --mgsnode 172.16.84.45@tcp0 --backfstype zfs osspool0/ost /dev/sde 
 mkfs.lustre --ost --reformat --fsname bigfs --index 5 --mgsnode 172.16.84.43@tcp0  --mgsnode 172.16.84.44@tcp0  --mgsnode 172.16.84.45@tcp0  --backfstype zfs osspool1/ost /dev/sdf 
+
+mount.lustre osspool0/ost /lustre/ost4
+mount.lustre osspool1/ost /lustre/ost5
 
 ```
 ### 客户端节点挂载
