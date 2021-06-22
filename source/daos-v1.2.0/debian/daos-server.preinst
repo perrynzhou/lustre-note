@@ -1,5 +1,0 @@
-#!/bin/sh
-set -e
-
-addgroup --system daos_server
-adduser --system --ingroup daos_server daos_server
