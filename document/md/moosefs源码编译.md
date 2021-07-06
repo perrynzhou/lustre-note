@@ -28,6 +28,8 @@ MASTER_PORT = 9419
 - 启动
 ```
 /usr/local/bin/mfsmaster -a start
+
+// 源码入口:mfscommon/main.c
 ```
 
 ##### mfs metalogger
@@ -41,6 +43,8 @@ MASTER_PORT = 9419
 - 启动
 ```
 /usr/local/bin/mfsmetalogger start
+
+// 源码入口:mfscommon/main.c
 ```
 
 ##### mfs chunkserver
@@ -63,10 +67,14 @@ MASTER_PORT = 9420
 - 启动
 ```
 ./mfschunkserver start
+
+// 源码入口:mfscommon/main.c
 ```
 
 ##### mfs 客户端挂在
 
 ```
 ./mfsmount  /mnt/mfs/ -H 172.29.76.218
+
+// 源码入口:mfsmount.c
 ```
