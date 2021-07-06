@@ -12,7 +12,8 @@
 
 - [OpenZFS介绍](./document/md/zfs/OpenZFS介绍.md)
 
-
+### moosefs
+- [moosefs源码编译](./document/md/moosefs/moosefs源码编译.md)
 ### nfs-ganesha
 - [nfs-ganesha容器部署](./document/md/nfs-ganesha/nfs-ganesha容器部署.md)
 - [nfs-ganesha源码安装](./document/md/nfs-ganesha/nfs-ganesha源码安装.md)
